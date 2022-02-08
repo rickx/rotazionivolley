@@ -1,3 +1,4 @@
+ 
 var monkeysppp = monkeysppp || { vbRotations: {} };
 
 monkeysppp.vbRotations.SVGMaker = function() {
@@ -12,7 +13,11 @@ monkeysppp.vbRotations.SVGMaker = function() {
   this.courtColour           = '#ffb591';
   this.lineColour            = 'white';
   this.playerColour          = '#efa581';
+  this.strokko				       = '#f00',
+  this.strokko2         	   = '#0f0';
+  this.playerColour2          = '#00a581';
   this.playerColourHighlight = '#66dd66';
+  this.playerColourHighlight2 = '#00dd66';
   this.rotationControlColour = 'white';
   this.rotationControlHighlightColour = '#dddddd';
   this.rotationControlBackgroundColourA = '#65b6df';
@@ -28,6 +33,9 @@ monkeysppp.vbRotations.SVGMaker = function() {
   this.m2 = null;
   this.h1 = null;
   this.h2 = null;
+
+  this.squad = null; 
+  this.prima = [0,1,1,1,0,0];
 
   this.rotationControls = null;
   this.highlightedPlayer = 0;
@@ -642,6 +650,25 @@ monkeysppp.vbRotations.SVGMaker = function() {
       'stroke-dasharray': '9, 9',
     });
   }
+  
+  function redrawPlayers(rotation) {
+    //need to understand where to trigger this, but meanwhile setting the logic here
+    var inprima = 0;
+    console.log("Rotation "+rotation);
+        for(role = 0; role<6; role++) {
+            inprima = _this.prima[(rotation+role-1) % 6];
+            if(inprima==1){
+              console.log("player"+role + "("+ _this.squad[role][1].node.textContent+") is 1st line");
+              _this.squad[role][0].attr({stroke: _this.strokko2});
+            }
+            else{
+              _this.squad[role][0].attr({stroke: _this.strokko});
+              console.log("player"+role + "("+ _this.squad[role][1].node.textContent+") is 2nd line");
+            }
+          //role++;
+        }
+        console.log("Rotation "+rotation+ " done. -------------");
+    }
 
   function drawPlayers() {
     // Player markers
@@ -765,6 +792,8 @@ monkeysppp.vbRotations.SVGMaker = function() {
     _this.h2.click(function() {toggleHighlightPlayer(h2Circle);});
     _this.m1.click(function() {toggleHighlightPlayer(m1Circle);});
     _this.m2.click(function() {toggleHighlightPlayer(m2Circle);});
+
+    _this.squad = [_this.setter, _this.h1 , _this.m1, _this.oppo, _this.h2, _this.m2];
   }
 
   function drawRotationControl() {
@@ -1051,18 +1080,18 @@ monkeysppp.vbRotations.SVGMaker = function() {
     var controlCircles = _this.sroot.group(_this.controlOneSrv, _this.controlTwoSrv, _this.controlThreeSrv, _this.controlFourSrv, _this.controlFiveSrv, _this.controlSixSrv,
         _this.controlOneRcv, _this.controlTwoRcv, _this.controlThreeRcv, _this.controlFourRcv, _this.controlFiveRcv, _this.controlSixRcv);
 
-    _this.controlTwoRcv.click(function() {_this.setterAt = 2;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlTwoSrv.click(function() {_this.setterAt = 2;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlOneRcv.click(function() {_this.setterAt = 1;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlOneSrv.click(function() {_this.setterAt = 1;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlSixRcv.click(function() {_this.setterAt = 6;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlSixSrv.click(function() {_this.setterAt = 6;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlFiveRcv.click(function() {_this.setterAt = 5;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlFiveSrv.click( function() {_this.setterAt = 5;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlFourRcv.click( function() {_this.setterAt = 4;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlFourSrv.click( function() {_this.setterAt = 4;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlThreeRcv.click(function() {_this.setterAt = 3;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlThreeSrv.click(function() {_this.setterAt = 3;if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlTwoRcv.click(function() {_this.setterAt = 2;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlTwoSrv.click(function() {_this.setterAt = 2;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlOneRcv.click(function() {_this.setterAt = 1;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlOneSrv.click(function() {_this.setterAt = 1;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlSixRcv.click(function() {_this.setterAt = 6;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlSixSrv.click(function() {_this.setterAt = 6;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlFiveRcv.click(function() {_this.setterAt = 5;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlFiveSrv.click( function() {_this.setterAt = 5;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlFourRcv.click( function() {_this.setterAt = 4;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlFourSrv.click( function() {_this.setterAt = 4;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlThreeRcv.click(function() {_this.setterAt = 3;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlThreeSrv.click(function() {_this.setterAt = 3;if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
 
     _this.rotationControls = _this.sroot.group(backgroundBoxes, headingLabels, rotationLabels, joinLines, setLines, controlCircles);
 
@@ -1306,14 +1335,14 @@ monkeysppp.vbRotations.SVGMaker = function() {
       'font-size':'22'
     });
 
-    _this.controlServeBase.click(function() {if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
-    _this.controlServeServe.click(function() {if (move(_this.playerOffsetsServeServe[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeServe);}});
-    _this.controlServeSwitch.click(function() {if (move(_this.playerOffsetsSwitchServe[_this.setterAt], 500)) {controlSelect(_this.setterAt, true, _this.controlServeSwitch);}});
-    _this.controlReceiveBase.click(function() {if (move(_this.playerOffsetsBase[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
-    _this.controlReceiveReceive.click(function() {if (move(_this.playerOffsetsReceiveReceive[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveReceive);}});
-    _this.controlReceiveSet.click(function() {if (move(_this.playerOffsetsReceiveSet[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveSet);}});
-    _this.controlReceiveHit.click(function() {if (move(_this.playerOffsetsReceiveHit[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveHit);}});
-    _this.controlReceiveSwitch.click(function() {if (move(_this.playerOffsetsSwitchReceive[_this.setterAt], 500)) {controlSelect(_this.setterAt, false, _this.controlReceiveSwitch);}});
+    _this.controlServeBase.click(function() {if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeBase);}});
+    _this.controlServeServe.click(function() {if (move(_this.playerOffsetsServeServe[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeServe);}});
+    _this.controlServeSwitch.click(function() {if (move(_this.playerOffsetsSwitchServe[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, true, _this.controlServeSwitch);}});
+    _this.controlReceiveBase.click(function() {if (move(_this.playerOffsetsBase[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveBase);}});
+    _this.controlReceiveReceive.click(function() {if (move(_this.playerOffsetsReceiveReceive[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveReceive);}});
+    _this.controlReceiveSet.click(function() {if (move(_this.playerOffsetsReceiveSet[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveSet);}});
+    _this.controlReceiveHit.click(function() {if (move(_this.playerOffsetsReceiveHit[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveHit);}});
+    _this.controlReceiveSwitch.click(function() {if (move(_this.playerOffsetsSwitchReceive[_this.setterAt], 500, _this.setterAt)) {controlSelect(_this.setterAt, false, _this.controlReceiveSwitch);}});
   }
 
   function drawTutorialButton() {
@@ -1462,7 +1491,7 @@ monkeysppp.vbRotations.SVGMaker = function() {
 
   function initialisePlayers() {
     controlSelect(2, true, _this.controlServeBase);
-    move(_this.playerOffsetsBase[2], 1);
+    move(_this.playerOffsetsBase[2], 1, 2);
     serveRotation = true;
   }
 
@@ -1534,7 +1563,7 @@ monkeysppp.vbRotations.SVGMaker = function() {
     }
   }
 
-  function move(players, time) {
+  function move(players, time, rotatio) {
     if (_this.moving) {
       return false;
     }
@@ -1546,6 +1575,8 @@ monkeysppp.vbRotations.SVGMaker = function() {
     _this.m2.animate({ transform:'translate(' + players.m2.x + ', ' + players.m2.y + ')'}, time, null, donemove);
     _this.h1.animate({ transform:'translate(' + players.h1.x + ', ' + players.h1.y + ')'}, time, null, donemove);
     _this.h2.animate({ transform:'translate(' + players.h2.x + ', ' + players.h2.y + ')'}, time, null, donemove);
+	
+	redrawPlayers(rotatio);
     return true;
   }
 //  function goback() {
